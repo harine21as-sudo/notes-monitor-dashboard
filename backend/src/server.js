@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
+import { startMonitor } from "./monitor/index.js"; // <-- updated import
 
 dotenv.config();
 
@@ -14,7 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 // Database Connection
-connectDB();
+connectDB().then(() => {
+    // Start monitor AFTER DB connection
+    startMonitor();
+});
 
 // Routes
 app.use("/api/notes", notesRoutes);
@@ -24,7 +28,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Unexpected Server Error", error: err.message });
 });
 
-// Add a simple landing route
+// Landing route
 app.get("/", (req, res) => {
     res.send("Target App Backend is Running Successfully!");
 });

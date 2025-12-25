@@ -1,18 +1,32 @@
 import mongoose from 'mongoose';
 
 const downtimeLogSchema = new mongoose.Schema({
-  targetUrl: String,
-  statusCode: Number,
-  responseTimeMs: Number,
-  isUp: Boolean,
-  errorMessage: String,
+  targetUrl: {
+    type: String,
+    required: true
+  },
+  statusCode: {
+    type: Number
+  },
+  responseTimeMs: {
+    type: Number
+  },
+  isUp: {
+    type: Boolean,
+    required: true
+  },
+  errorMessage: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-// ✅ Check if model exists, otherwise define it
-const DowntimeLog = mongoose.models.DowntimeLog || mongoose.model('DowntimeLog', downtimeLogSchema);
+// ✅ SAFE MODEL DEFINITION (prevents OverwriteModelError)
+const DowntimeLog =
+  mongoose.models.DowntimeLog ||
+  mongoose.model('DowntimeLog', downtimeLogSchema);
 
 export default DowntimeLog;

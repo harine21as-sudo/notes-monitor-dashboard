@@ -5,12 +5,15 @@ import NoteList from './components/NoteList.jsx';
 import ImpactDashboard from './components/ImpactDashboard.jsx';
 import './App.css';
 
+// Replace localhost with Render backend URL
+const API_URL = "https://notes-monitor-dashboard.onrender.com/api/notes";
+
 function App() {
   const [notes, setNotes] = useState([]);
 
   const fetchNotes = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/notes');
+      const res = await axios.get(API_URL);
       setNotes(res.data);
     } catch (err) {
       console.error("Backend connection failed.", err);
@@ -19,7 +22,7 @@ function App() {
 
   const updateNote = async (id, updatedData) => {
     try {
-      await axios.put(`http://localhost:5001/api/notes/${id}`, updatedData);
+      await axios.put(`${API_URL}/${id}`, updatedData);
       fetchNotes(); 
     } catch (err) {
       console.error("Update failed", err);
@@ -28,7 +31,7 @@ function App() {
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`http://localhost:5001/api/notes/${id}`);
+      await axios.delete(`${API_URL}/${id}`);
       fetchNotes();
     } catch (err) {
       console.error("Delete failed", err);
@@ -39,29 +42,27 @@ function App() {
     fetchNotes();
   }, []);
 
-  // frontend/src/App.jsx
+  return (
+    <div className="dashboard-layout">
+      {/* Sidebar remains on the left */}
+      <aside className="sidebar">
+        <h2>Create Note</h2>
+        <NoteForm onNoteAdded={fetchNotes} />
+      </aside>
+      
+      <main className="main-content">
+        <div className="top-section">
+          <h1>My Notes</h1>
+          <NoteList notes={notes} onDelete={deleteNote} onUpdate={updateNote} />
+        </div>
 
-return (
-  <div className="dashboard-layout">
-    {/* Sidebar remains on the left */}
-    <aside className="sidebar">
-      <h2>Create Note</h2>
-      <NoteForm onNoteAdded={fetchNotes} />
-    </aside>
-    
-    <main className="main-content">
-      <div className="top-section">
-        <h1>My Notes</h1>
-        <NoteList notes={notes} onDelete={deleteNote} onUpdate={updateNote} />
-      </div>
-
-      {/* Moved Dashboard here to take full width of main area */}
-      <div className="bottom-section">
-        <ImpactDashboard />
-      </div>
-    </main>
-  </div>
-);
+        {/* Moved Dashboard here to take full width of main area */}
+        <div className="bottom-section">
+          <ImpactDashboard />
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export default App;

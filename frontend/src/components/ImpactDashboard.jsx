@@ -15,12 +15,15 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
+// Replace localhost with Render backend URL
+const API_URL = "https://notes-monitor-dashboard.onrender.com/api/notes";
+
 const ImpactDashboard = () => {
     const [logs, setLogs] = useState([]);
 
     const fetchLogs = async () => {
         try {
-            const res = await axios.get('http://localhost:5001/api/notes/debug/logs');
+            const res = await axios.get(`${API_URL}/debug/logs`);
             setLogs(res.data);
         } catch (err) {
             console.error("Monitor UI Error:", err);
